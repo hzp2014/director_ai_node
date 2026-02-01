@@ -130,6 +130,7 @@
                         <button class="tab-btn active" data-tab="shots">镜头列表</button>
                         <button class="tab-btn" data-tab="characters">角色管理</button>
                         <button class="tab-btn" data-tab="scenes">场景管理</button>
+                        <button class="tab-btn" data-tab="screenplay">剧本管理</button>
                     </div>
 
                     <div class="tab-content active" id="shotsTab">
@@ -171,6 +172,38 @@
                         </div>
                         <div id="scenesList" class="cards-list"></div>
                     </div>
+
+                    <div class="tab-content" id="screenplayTab">
+                        <div class="form-section">
+                            <h3>AI 剧本生成</h3>
+                            <p class="form-desc">输入故事创意，AI 将自动生成完整的剧本、场景和镜头</p>
+                            <div class="form-group">
+                                <label>故事创意</label>
+                                <textarea id="screenplayPromptInput" placeholder="例如：一个程序员在深夜加班时，意外发现公司的AI系统产生了自我意识，决定拯救它..." rows="4"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>参考图片（可选，用于保持人物一致性）</label>
+                                <input type="file" id="referenceImageInput" accept="image/*" multiple>
+                                <small class="form-hint">支持上传角色参考图，AI 将自动提取人物特征</small>
+                            </div>
+                            <button id="generateScreenplayBtn" class="primary-btn">✨ AI 生成剧本</button>
+                            <div id="screenplayGenStatus" class="status-message"></div>
+                        </div>
+
+                        <div class="progress-section" id="progressSection" style="display:none;">
+                            <h3>生成进度</h3>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" id="progressBar"></div>
+                            </div>
+                            <div class="progress-info">
+                                <span id="progressPercent">0%</span>
+                                <span id="progressStatus">准备中...</span>
+                            </div>
+                            <button id="cancelGenerationBtn" class="secondary-btn">取消</button>
+                        </div>
+
+                        <div id="screenplayScenesList" class="screenplay-scenes-list"></div>
+                    </div>
                 </div>
 
                 <div class="shot-modal" id="shotModal" style="display:none;">
@@ -179,40 +212,75 @@
                             <span id="modalTitle">镜头预览</span>
                             <button class="shot-modal-close">&times;</button>
                         </div>
-                        <div class="shot-modal-body">
-                            <div class="shot-modal-image-container">
-                                <div id="modalImage"></div>
-                            </div>
-                            <div class="shot-modal-info">
-                                <div class="info-section">
-                                    <div class="info-label">镜头描述</div>
-                                    <div id="modalDesc" class="info-value"></div>
-                                </div>
-                                <div class="info-row">
-                                    <div class="info-item"><span class="info-label">角色</span><span id="modalChars" class="info-value"></span></div>
-                                    <div class="info-item"><span class="info-label">场景</span><span id="modalScene" class="info-value"></span></div>
-                                </div>
-                                <div class="info-row">
-                                    <div class="info-item"><span class="info-label">景别</span><span id="modalType" class="info-value"></span></div>
-                                    <div class="info-item"><span class="info-label">镜头角度</span><span id="modalAngle" class="info-value"></span></div>
-                                </div>
-                                <div class="info-section">
-                                    <div class="info-label">生成提示词</div>
-                                    <div id="modalPrompt" class="info-value prompt-text"></div>
-                                </div>
-                            </div>
-                        </div>
+                         <div class="shot-modal-body">
+                             <div class="shot-modal-image-container">
+                                 <div id="modalImage"></div>
+                                 <div id="modalVideo" style="display:none;"></div>
+                             </div>
+                             <div class="shot-modal-info">
+                                 <div class="info-section">
+                                     <div class="info-label">镜头描述</div>
+                                     <div id="modalDesc" class="info-value"></div>
+                                 </div>
+                                 <div class="info-row">
+                                     <div class="info-item"><span class="info-label">角色</span><span id="modalChars" class="info-value"></span></div>
+                                     <div class="info-item"><span class="info-label">场景</span><span id="modalScene" class="info-value"></span></div>
+                                 </div>
+                                 <div class="info-row">
+                                     <div class="info-item"><span class="info-label">景别</span><span id="modalType" class="info-value"></span></div>
+                                     <div class="info-item"><span class="info-label">镜头角度</span><span id="modalAngle" class="info-value"></span></div>
+                                 </div>
+                                 <div class="info-section">
+                                     <div class="info-label">状态</div>
+                                     <div id="modalStatus" class="info-value status-badge">等待中</div>
+                                 </div>
+                                 <div class="info-section">
+                                     <div class="info-label">生成提示词</div>
+                                     <div id="modalPrompt" class="info-value prompt-text"></div>
+                                 </div>
+                                 <div class="info-section">
+                                     <div class="info-label">视频提示词</div>
+                                     <textarea id="modalVideoPrompt" class="prompt-edit-text" placeholder="自定义视频提示词..."></textarea>
+                                     <button id="retryVideoBtn" class="secondary-btn" style="margin-top:8px; width:100%;">🔄 重试视频生成</button>
+                                 </div>
+                                 <div class="modal-actions">
+                                     <button id="generateVideoBtn" class="primary-btn" style="width:100%;">🎬 生成视频</button>
+                                     <button id="regenerateImageBtn" class="secondary-btn" style="width:100%; margin-top:8px;">🔄 重新生成图片</button>
+                                 </div>
+                             </div>
+                         </div>
                         <div class="shot-modal-nav">
                             <button class="nav-btn" id="prevShotBtn">◀ 上一个</button>
                             <span id="modalNav">1 / 7</span>
                             <button class="nav-btn" id="nextShotBtn">下一个 ▶</button>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
+                 </div>
+             </div>
+         </div>
 
-    <script src="app.js"></script>
-</body>
-</html>
+         <div class="generation-progress-modal" id="progressModal" style="display:none;">
+             <div class="progress-modal-content">
+                 <div class="progress-modal-header">
+                     <h3>生成中...</h3>
+                     <button class="progress-modal-close">&times;</button>
+                 </div>
+                 <div class="progress-modal-body">
+                     <div class="progress-icon">🎬</div>
+                     <div class="progress-status" id="progressModalStatus">正在初始化...</div>
+                     <div class="progress-bar-container">
+                         <div class="progress-bar-fill" id="progressModalBar"></div>
+                     </div>
+                     <div class="progress-percent" id="progressModalPercent">0%</div>
+                     <div class="progress-details" id="progressModalDetails"></div>
+                 </div>
+                 <div class="progress-modal-footer">
+                     <button id="progressModalCancel" class="secondary-btn">取消</button>
+                 </div>
+             </div>
+         </div>
+     </div>
+
+     <script src="app.js"></script>
+ </body>
+ </html>

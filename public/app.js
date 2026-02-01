@@ -1,6 +1,8 @@
 const API_BASE = window.location.origin;
 let currentProject = null;
 let currentModalShotIndex = 0;
+let currentScreenplay = null;
+let isGenerationCancelled = false;
 
 async function apiRequest(endpoint, options = {}) {
     try {
@@ -202,6 +204,81 @@ async function generateShot(shotNum, customPrompt = '') {
     }
 }
 
+async function generateShotVideo(shotNum, customPrompt = '') {
+    try {
+        await apiRequest(`/api/projects/current/shots/${shotNum}/generate-video`, {
+            method: 'POST',
+            body: JSON.stringify({ custom_prompt: customPrompt })
+        });
+        await loadProject();
+        updateShotsList();
+        return true;
+    } catch (error) {
+        alert(`视频生成失败: ${error.message}`);
+        return false;
+    }
+}
+
+async function generateScreenplay(prompt, referenceImages = []) {
+    try {
+        const formData = new FormData();
+        formData.append('prompt', prompt);
+        if (referenceImages && referenceImages.length > 0) {
+            referenceImages.forEach(file => {
+                formData.append('images', file);
+            });
+        }
+
+        const response = await fetch(`${API_BASE}/api/screenplay/generate`, {
+            method: 'POST',
+            body: formData
+        });
+
+        if (!response.ok) {
+            const data = await response.json();
+            throw new Error(data.message || '生成失败');
+        }
+
+        const result = await response.json();
+        if (result.success && result.data) {
+            currentScreenplay = result.data;
+            return currentScreenplay;
+        }
+        throw new Error('生成失败');
+    } catch (error) {
+        console.error('生成剧本失败:', error);
+        throw error;
+    }
+}
+
+async function retrySceneVideo(sceneId, customPrompt = '') {
+    try {
+        await apiRequest(`/api/screenplay/${currentScreenplay.taskId}/retry/${sceneId}`, {
+            method: 'POST',
+            body: JSON.stringify({ custom_prompt: customPrompt })
+        });
+        await loadScreenplay();
+        updateScreenplayScenesList();
+        return true;
+    } catch (error) {
+        alert(`重试失败: ${error.message}`);
+        return false;
+    }
+}
+
+async function cancelSceneGeneration() {
+    try {
+        await apiRequest(`/api/screenplay/${currentScreenplay.taskId}/cancel`, {
+            method: 'POST'
+        });
+        isGenerationCancelled = true;
+        return true;
+    } catch (error) {
+        console.error('取消失败:', error);
+        return false;
+    }
+}
+
 function updateShotsList() {
     const shotsList = document.getElementById('shotsList');
     if (!currentProject?.shots?.length) {
@@ -269,6 +346,79 @@ function updateScenesList() {
     `).join('');
 }
 
+function updateScreenplayScenesList() {
+    const scenesList = document.getElementById('screenplayScenesList');
+    if (!currentScreenplay?.scenes?.length) {
+        scenesList.innerHTML = '<div class="no-items">暂无场景</div>';
+        return;
+    }
+
+    scenesList.innerHTML = currentScreenplay.scenes.map(scene => {
+        const statusClass = scene.status || 'pending';
+        const statusText = {
+            'pending': '等待中',
+            'image_generating': '生成图片中',
+            'image_completed': '图片已完成',
+            'video_generating': '生成视频中',
+            'completed': '已完成',
+            'failed': '失败'
+        }[statusClass] || scene.status;
+
+        return `
+            <div class="scene-card">
+                <div class="scene-card-header">
+                    <span class="scene-card-number">场景 ${scene.sceneId}</span>
+                    <span class="scene-card-status ${statusClass}">${statusText}</span>
+                </div>
+                <div class="scene-card-body">
+                    <div class="scene-narration">${scene.narration || '暂无旁白'}</div>
+                    <div class="scene-media">
+                        <div class="scene-media-item">
+                            ${scene.imageUrl
+                                ? `<img src="${scene.imageUrl}" alt="场景图片">`
+                                : `<div class="scene-media-placeholder">
+                                    <span>📷</span>
+                                    <small>未生成图片</small>
+                                </div>`
+                            }
+                        </div>
+                        <div class="scene-media-item">
+                            ${scene.videoUrl
+                                ? `<video src="${scene.videoUrl}" controls></video>`
+                                : `<div class="scene-media-placeholder">
+                                    <span>🎬</span>
+                                    <small>未生成视频</small>
+                                </div>`
+                            }
+                        </div>
+                    </div>
+                    <div class="scene-card-actions">
+                        ${statusClass === 'failed' || !scene.imageUrl ? `
+                            <button class="retry-btn" onclick="retryScene(${scene.sceneId})">🔄 重试生成</button>
+                        ` : ''}
+                        ${scene.imageUrl && !scene.videoUrl && statusClass !== 'video_generating' ? `
+                            <button class="primary-btn" onclick="generateSceneVideo(${scene.sceneId})">🎬 生成视频</button>
+                        ` : ''}
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+async function loadScreenplay() {
+    if (!currentScreenplay?.taskId) return;
+    try {
+        const result = await apiRequest(`/api/screenplay/${currentScreenplay.taskId}`);
+        if (result.success && result.data) {
+            currentScreenplay = result.data;
+            updateScreenplayScenesList();
+        }
+    } catch (error) {
+        console.error('加载剧本失败:', error);
+    }
+}
+
 function openShotModal(index) {
     if (!currentProject?.shots?.length) return;
     
@@ -312,14 +462,40 @@ function navigateShot(direction) {
 
 function showStatus(elementId, message, type) {
     const el = document.getElementById(elementId);
+    if (!el) return;
     el.textContent = message;
     el.className = type;
     el.style.display = 'block';
-    
+
     if (type === 'success') {
         setTimeout(() => {
             el.style.display = 'none';
         }, 3000);
+    }
+}
+
+function showProgressModal() {
+    document.getElementById('progressModal').style.display = 'flex';
+}
+
+function hideProgressModal() {
+    document.getElementById('progressModal').style.display = 'none';
+}
+
+function updateProgressModal(percent, status, details = '') {
+    document.getElementById('progressModalBar').style.width = `${percent}%`;
+    document.getElementById('progressModalPercent').textContent = `${Math.round(percent)}%`;
+    document.getElementById('progressModalStatus').textContent = status;
+    document.getElementById('progressModalDetails').textContent = details;
+}
+
+function updateScreenplayProgress(percent, status, details = '') {
+    const progressSection = document.getElementById('progressSection');
+    if (progressSection) {
+        progressSection.style.display = 'block';
+        document.getElementById('progressBar').style.width = `${percent}%`;
+        document.getElementById('progressPercent').textContent = `${Math.round(percent)}%`;
+        document.getElementById('progressStatus').textContent = status;
     }
 }
 
@@ -380,16 +556,89 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('addSceneBtn')?.addEventListener('click', () => {
         const name = document.getElementById('sceneNameInput').value.trim();
         const description = document.getElementById('sceneDescInput').value.trim();
-        
+
         if (!name) {
             alert('请输入场景名称');
             return;
         }
-        
+
         if (addScene(name, description)) {
             document.getElementById('sceneNameInput').value = '';
             document.getElementById('sceneDescInput').value = '';
         }
+    });
+
+    document.getElementById('generateScreenplayBtn')?.addEventListener('click', async () => {
+        const prompt = document.getElementById('screenplayPromptInput').value.trim();
+        if (!prompt) {
+            alert('请输入故事创意');
+            return;
+        }
+
+        const fileInput = document.getElementById('referenceImageInput');
+        const referenceImages = fileInput ? Array.from(fileInput.files) : [];
+
+        isGenerationCancelled = false;
+        showProgressModal();
+        updateProgressModal(0, '正在生成剧本...', 'AI正在分析并规划故事结构');
+
+        try {
+            await generateScreenplay(prompt, referenceImages);
+            updateProgressModal(100, '生成完成！', '剧本已生成完毕');
+            setTimeout(() => {
+                hideProgressModal();
+                updateScreenplayScenesList();
+            }, 1500);
+        } catch (error) {
+            hideProgressModal();
+            showStatus('screenplayGenStatus', `生成失败: ${error.message}`, 'error');
+        }
+    });
+
+    document.getElementById('cancelGenerationBtn')?.addEventListener('click', async () => {
+        if (confirm('确定要取消生成吗？')) {
+            await cancelSceneGeneration();
+            isGenerationCancelled = true;
+            hideProgressModal();
+            showStatus('screenplayGenStatus', '已取消生成', 'error');
+        }
+    });
+
+    document.getElementById('progressModalCancel')?.addEventListener('click', async () => {
+        if (confirm('确定要取消生成吗？')) {
+            await cancelSceneGeneration();
+            isGenerationCancelled = true;
+            hideProgressModal();
+            showStatus('screenplayGenStatus', '已取消生成', 'error');
+        }
+    });
+
+    document.querySelector('.progress-modal-close')?.addEventListener('click', () => {
+        if (isGenerationCancelled) {
+            hideProgressModal();
+        }
+    });
+
+    document.getElementById('generateVideoBtn')?.addEventListener('click', async () => {
+        if (!currentProject?.shots || currentModalShotIndex >= currentProject.shots.length) return;
+        const shot = currentProject.shots[currentModalShotIndex];
+        await generateShotVideo(shot.shot_number);
+        openShotModal(currentModalShotIndex);
+    });
+
+    document.getElementById('regenerateImageBtn')?.addEventListener('click', async () => {
+        if (!currentProject?.shots || currentModalShotIndex >= currentProject.shots.length) return;
+        const shot = currentProject.shots[currentModalShotIndex];
+        await generateShot(shot.shot_number);
+        openShotModal(currentModalShotIndex);
+    });
+
+    document.getElementById('retryVideoBtn')?.addEventListener('click', async () => {
+        if (!currentProject?.shots || currentModalShotIndex >= currentProject.shots.length) return;
+        const shot = currentProject.shots[currentModalShotIndex];
+        const customPrompt = document.getElementById('modalVideoPrompt')?.value.trim();
+        await generateShotVideo(shot.shot_number, customPrompt);
+        openShotModal(currentModalShotIndex);
     });
     
     document.querySelector('.shot-modal-close')?.addEventListener('click', closeShotModal);
