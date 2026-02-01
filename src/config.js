@@ -38,6 +38,30 @@ class Settings {
     this._ollamaPort = parseInt(process.env.OLLAMA_PORT || '11434');
     this._debug = process.env.DEBUG === 'true' || process.env.DEBUG === '1';
     this._baseDir = PROJECT_ROOT;
+
+    this._zhipuApiKey = process.env.ZHIPU_API_KEY || '';
+    this._zhipuApiBaseUrl = process.env.ZHIPU_API_BASE_URL || 'https://open.bigmodel.cn/api/paas/v4';
+    this._defaultChatModel = process.env.DEFAULT_CHAT_MODEL || 'glm-4.7';
+
+    this._doubaoApiKey = process.env.DOUBAO_API_KEY || '';
+    this._doubaoApiBaseUrl = process.env.DOUBAO_API_BASE_URL || 'https://ark.cn-beijing.volces.com/api/v3';
+    this._defaultImageModel = process.env.DOUBAO_IMAGE_MODEL || 'doubao-vision-pro-32k';
+
+    this._videoApiKey = process.env.VIDEO_API_KEY || '';
+    this._videoApiBaseUrl = process.env.VIDEO_API_BASE_URL || 'https://api.tuzi.ai/v1';
+    this._defaultVideoModel = process.env.VIDEO_MODEL || 'veo3.1-components';
+    this._videoSize = process.env.VIDEO_SIZE || '1280x720';
+    this._videoSeconds = process.env.VIDEO_SECONDS || '5';
+
+    this._concurrentScenes = parseInt(process.env.CONCURRENT_SCENES || '3');
+
+    this._useMockVideoApi = process.env.USE_MOCK_VIDEO_API === 'true' || process.env.USE_MOCK_VIDEO_API === '1';
+    this._useMockChatApi = process.env.USE_MOCK_CHAT_API === 'true' || process.env.USE_MOCK_CHAT_API === '1';
+
+    this._ffmpegPath = process.env.FFMPEG_PATH || null;
+    this._mergedVideosDir = process.env.MERGED_VIDEOS_DIR || './outputs/merged_videos';
+
+    this._characterReferenceCount = parseInt(process.env.CHARACTER_REFERENCE_COUNT || '3');
   }
 
   get apiKey() {
@@ -116,6 +140,74 @@ class Settings {
     return this._baseDir;
   }
 
+  get zhipuApiKey() {
+    return this._zhipuApiKey;
+  }
+
+  get zhipuApiBaseUrl() {
+    return this._zhipuApiBaseUrl;
+  }
+
+  get defaultChatModel() {
+    return this._defaultChatModel;
+  }
+
+  get doubaoApiKey() {
+    return this._doubaoApiKey;
+  }
+
+  get doubaoApiBaseUrl() {
+    return this._doubaoApiBaseUrl;
+  }
+
+  get defaultImageModel() {
+    return this._defaultImageModel;
+  }
+
+  get videoApiKey() {
+    return this._videoApiKey;
+  }
+
+  get videoApiBaseUrl() {
+    return this._videoApiBaseUrl;
+  }
+
+  get defaultVideoModel() {
+    return this._defaultVideoModel;
+  }
+
+  get videoSize() {
+    return this._videoSize;
+  }
+
+  get videoSeconds() {
+    return this._videoSeconds;
+  }
+
+  get concurrentScenes() {
+    return this._concurrentScenes;
+  }
+
+  get useMockVideoApi() {
+    return this._useMockVideoApi;
+  }
+
+  get useMockChatApi() {
+    return this._useMockChatApi;
+  }
+
+  get ffmpegPath() {
+    return this._ffmpegPath;
+  }
+
+  get mergedVideosDir() {
+    return path.join(this._baseDir, this._mergedVideosDir);
+  }
+
+  get characterReferenceCount() {
+    return this._characterReferenceCount;
+  }
+
   get assetsDir() {
     return path.join(this._baseDir, 'assets');
   }
@@ -140,6 +232,10 @@ class Settings {
     return path.join(this._baseDir, 'uploads');
   }
 
+  get logsDir() {
+    return path.join(this._baseDir, 'logs');
+  }
+
   ensureDirectories() {
     const directories = [
       this.assetsDir,
@@ -147,7 +243,9 @@ class Settings {
       this.outputsDir,
       this.exportsDir,
       this.examplesDir,
-      this.uploadsDir
+      this.uploadsDir,
+      this.mergedVideosDir,
+      this.logsDir
     ];
 
     directories.forEach(dir => {

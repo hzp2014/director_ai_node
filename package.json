@@ -27,7 +27,8 @@
     "sharp": "^0.33.0",
     "form-data": "^4.0.0",
     "uuid": "^9.0.1",
-    "ws": "^8.16.0"
+    "ws": "^8.16.0",
+    "fluent-ffmpeg": "^2.1.2"
   },
   "devDependencies": {
     "@types/node": "^20.10.0"

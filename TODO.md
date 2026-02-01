@@ -1,121 +1,148 @@
 # TODO - 待办事项
 
-## 已完成核心功能
+## 🎉 新增功能（从安卓项目迁移）
 
-### 核心功能实现
+### ✅ 已完成 - P0 核心功能
 
-- [x] 完成 `src/promptGenerator.js`
-  - [x] 实现 `generate_shot_prompt(shot, project)` 函数
-  - [x] 实现 `suggest_next_shot_template(previousShot)` 函数
-  - [x] 实现 `generate_standard_shot_prompt()` 函数
-  - [x] 实现 `generate_standard_prompt_text()` 函数
-  - [ ] 添加单元测试
+- [x] 更新配置管理 (`src/config.js`)
+  - [x] 添加智谱GLM API配置
+  - [x] 添加豆包ARK API配置
+  - [x] 添加视频生成API配置
+  - [x] 添加并发配置
+  - [x] 添加Mock模式配置
+  - [x] 添加FFmpeg配置
+  - [x] 添加角色一致性配置
 
-- [x] 完成 `src/imageGenerator.js`
-  - [x] 定义 ImageGenerator 基类
-  - [x] 实现 ApiImageGenerator（NanaBanana API）
-  - [x] 实现 ComfyUIImageGenerator（本地 ComfyUI）
-  - [x] 实现 MockImageGenerator（测试用）
-  - [x] 实现 `create_generator(backend)` 工厂函数
-  - [x] 添加生成结果处理
+- [x] 实现视频生成API客户端 (`src/videoGenerator.js`)
+  - [x] VideoGenerationResponse 数据模型
+  - [x] VideoGenerator 类
+  - [x] generateVideo() - 视频生成
+  - [x] pollVideoStatus() - 视频轮询
+  - [x] cancelVideoGeneration() - 取消生成
+  - [x] _sanitizeVideoPrompt() - 提示词净化
+  - [x] Mock模式支持
 
-- [x] 完成 `src/services.js` 核心服务
-  - [x] ProjectService 类
-    - [x] create_project()
-    - [x] get_project_info()
-    - [x] set_style()
-    - [x] load_example()
-  - [x] CharacterService 类
-    - [x] add_character()
-    - [x] delete_character()
-    - [x] list_characters()
-  - [x] SceneService 类
-    - [x] add_scene()
-    - [x] delete_scene()
-    - [x] list_scenes()
-  - [x] ShotService 类
-    - [x] add_shot()
-    - [x] delete_shot()
-    - [x] move_shot()
-    - [x] list_shots()
-  - [x] GenerationService 类
-    - [x] generate_shot()
-    - [x] generate_all_shots()
-  - [x] ImportExportService 类
-    - [x] export_project()
-    - [ ] import_project() - 由 smartImport.js 处理
-  - [x] 示例故事数据
-    - [x] 咖啡厅邂逅
-    - [x] 都市追逐
-    - [x] 温馨家庭
+- [x] 实现AI对话客户端 (`src/aiClient.js`)
+  - [x] ChatMessage 数据模型
+  - [x] StreamChunk 数据模型
+  - [x] AIClient 类
+  - [x] sendToGLMStream() - GLM流式对话
+  - [x] sendToGLM() - GLM非流式对话
+  - [x] analyzeImageForCharacter() - 豆包图片分析
+  - [x] rewriteVideoPromptForSafety() - 提示词重写
+  - [x] Mock模式支持
 
-### 主应用实现
+- [x] 实现剧本数据模型 (`src/screenplayModels.js`)
+  - [x] SceneStatus 枚举
+  - [x] ScreenplayStatus 枚举
+  - [x] Scene 类
+  - [x] Screenplay 类
+  - [x] ScreenplayProgress 类
 
-- [x] 完成 `src/app.js`
-  - [x] Express 应用初始化
-  - [x] 中间件配置
-    - [x] CORS
-    - [x] JSON 解析
-    - [x] 静态文件服务
-    - [x] multer 文件上传
-    - [x] 错误处理
-  - [x] API 路由定义
-    - [x] `/health` - 健康检查
-    - [x] `/api/status` - 服务器状态
-    - [x] `/api/examples` - 示例列表
-    - [x] `/api/projects` POST/GET - 创建/获取项目
-    - [x] `/api/projects/:id` PUT/DELETE - 更新/删除项目
-    - [x] `/api/projects/:id/style` PUT - 设置风格
-    - [x] `/api/projects/:id/load-example` POST - 加载示例
-    - [x] `/api/projects/:id/characters` POST/GET/DELETE - 角色管理
-    - [x] `/api/projects/:id/scenes` POST/GET/DELETE - 场景管理
-    - [x] `/api/projects/:id/shots` POST/GET/PUT/DELETE - 镜头管理
-    - [x] `/api/projects/:id/shots/:shotNum/move` PUT - 移动镜头
-    - [x] `/api/projects/:id/shots/:shotNum/generate` POST - 生成单个镜头
-    - [x] `/api/projects/:id/generate-all` POST - 批量生成
-    - [x] `/api/export` POST - 导出项目
-    - [x] `/api/import` POST - 导入文件
+- [x] 实现剧本管理服务 (`src/screenplayService.js`)
+  - [x] ScreenplayService 类
+  - [x] generateScreenplay() - 完整剧本生成流程
+  - [x] generateFromConfirmed() - 从确认剧本生成
+  - [x] retryScene() - 重试单个场景
+  - [x] startSceneGeneration() - 手动触发场景生成
+  - [x] startAllPendingScenesGeneration() - 手动触发所有待处理场景
+  - [x] updateSceneCustomPrompt() - 更新场景自定义提示词
+  - [x] cancel() - 取消操作
+  - [x] _analyzeUserImage() - 分析用户图片
+  - [x] _callGLMForScreenplay() - 调用GLM生成剧本
+  - [x] _parseScreenplay() - 解析剧本JSON
+  - [x] _generateAllImages() - 批量生成图片
+  - [x] _generateAllVideos() - 批量生成视频
+  - [x] 进度回调支持
+  - [x] 取消机制支持
 
-## 中优先级
+- [x] 更新依赖配置 (`package.json`)
+  - [x] 添加 fluent-ffmpeg 依赖
 
-### ComfyUI 集成
+- [x] 更新环境变量配置 (`.env.example`)
+  - [x] 添加智谱GLM API配置
+  - [x] 添加豆包ARK API配置
+  - [x] 添加视频生成API配置
+  - [x] 添加并发配置
+  - [x] 添加Mock模式配置
+  - [x] 添加FFmpeg配置
+  - [x] 添加角色一致性配置
 
-- [x] 完成 `src/comfyuiClient.js`
-  - [x] ComfyUI 客户端类
-  - [x] HTTP API 客户端
-  - [x] WebSocket 连接管理
-  - [x] 工作流上传和执行
-  - [x] 结果获取和下载
-  - [x] 错误处理和重试机制
+### 📋 待实现 - P1 重要功能
 
-### 智能导入
+- [ ] 扩展API路由 (`src/app.js`)
+  - [ ] 视频生成相关路由
+    - [ ] POST /api/projects/:id/generate-video
+    - [ ] POST /api/projects/:id/generate-all-videos
+    - [ ] GET /api/video/status/:taskId
+  - [ ] 剧本管理相关路由
+    - [ ] POST /api/screenplay
+    - [ ] POST /api/screenplay/:id/confirm
+    - [ ] POST /api/screenplay/:id/generate
+    - [ ] POST /api/screenplay/:id/retry/:sceneId
+    - [ ] POST /api/screenplay/:id/start/:sceneId
+    - [ ] GET /api/screenplay/:id/progress
+  - [ ] AI对话相关路由
+    - [ ] POST /api/ai/chat
+    - [ ] POST /api/ai/analyze-image
+    - [ ] POST /api/ai/rewrite-prompt
+  - [ ] 进度和取消相关路由
+    - [ ] GET /api/tasks/:taskId/progress
+    - [ ] POST /api/tasks/:taskId/cancel
 
-- [x] 完成 `src/smartImport.js`
-  - [x] SmartImporter 类
-  - [x] FileParser 基类
-  - [x] TextParser - 文本文件解析
-  - [x] MarkdownParser - Markdown 文件解析
-  - [x] HTMLParser - HTML 文件解析
-  - [x] ImageParser - 图片文件解析（占位符）
-  - [x] JsonParser - JSON 文件解析
-  - [x] DefaultAnalyzer - 默认分析器
-  - [x] JSON 验证和修复函数
-  - [x] 多文件导入支持
+- [ ] 实现视频合并服务 (`src/videoMerger.js`)
+  - [ ] VideoMerger 类
+  - [ ] mergeVideos() - 合并视频
+  - [ ] mergeVideosLossless() - 无损合并
+  - [ ] getMergedVideos() - 获取合并视频列表
+  - [ ] clearMergedVideos() - 清理合并视频
+  - [ ] getMergedVideosSize() - 获取合并视频大小
+  - [ ] getMergedVideosCount() - 获取合并视频数量
 
-### 文件系统操作
+- [ ] 视频合并相关路由 (`src/app.js`)
+  - [ ] POST /api/videos/merge
+  - [ ] GET /api/videos/merged
+  - [ ] DELETE /api/videos/merged
 
-- [x] 创建目录初始化工具
-  - [x] 确保 assets/, projects/, outputs/, exports/, examples/, uploads/ 存在
-  - [ ] 创建 asset 子目录（characters, scenes, props, styles）
+- [ ] 单元测试
+  - [ ] videoGenerator.js 测试
+  - [ ] aiClient.js 测试
+  - [ ] screenplayService.js 测试
+  - [ ] screenplayModels.js 测试
 
-## 低优先级
+### 📋 待实现 - P2 增强功能
 
-### 工具和辅助功能
+- [ ] 角色三视图生成功能
+  - [ ] 生成分镜头角色三视图
+  - [ ] 三视图URL管理
+  - [ ] 跨场景人物一致性优化
 
-- [ ] 添加日志系统
-  - [ ] 日志级别管理
-  - [ ] 文件日志输出
-  - [ ] 控制台日志格式化
+- [ ] 任务队列管理
+  - [ ] TaskQueue 类
+  - [ ] 优先级调度
+  - [ ] 任务持久化
+  - [ ] 任务重试策略
+
+- [ ] 集成测试
+  - [ ] 端到端测试
+  - [ ] API测试
+  - [ ] 性能测试
+
+- [ ] 文档更新
+  - [ ] API文档
+  - [ ] 使用教程
+  - [ ] 架构文档
+
+## 原有待办事项（仍需完成）
+
+### 中优先级
+
+- [ ] 添加单元测试
+  - [ ] promptGenerator.js 测试
+  - [ ] services.js 测试
+  - [ ] API 路由测试
+
+### 低优先级
 
 - [ ] 添加验证工具
   - [ ] 请求参数验证中间件
@@ -129,43 +156,31 @@
 
 ### 可选功能
 
-- [ ] 实现 `src/setupWizard.js`
-  - [ ] 交互式配置向导
-  - [ ] .env 文件自动生成
-  - [ ] API 密钥测试
-  - [ ] ComfyUI 连接测试
-
-- [ ] 添加单元测试
-  - [ ] models.js 测试
-  - [ ] promptGenerator.js 测试
-  - [ ] services.js 测试
+- [ ] 添加更多测试
+  - [ ] 集成测试
   - [ ] API 路由测试
-
-- [ ] 添加集成测试
-  - [ ] 端到端测试
-  - [ ] API 测试
 
 - [ ] 性能优化
   - [ ] 图片处理优化
-  - [ ] 数据库查询优化（如果使用数据库）
   - [ ] 内存使用优化
 
-### 文档
+- [ ] 完善文档
+  - [ ] API 文档
+    - [ ] OpenAPI/Swagger 规范
+    - [ ] 请求/响应示例
+    - [ ] 错误码说明
+  - [ ] 开发文档
+    - [ ] 架构设计文档
+    - [ ] 代码规范
+    - [ ] 贡献指南
+  - [ ] 用户文档
+    - [ ] 安装指南
+    - [ ] 使用教程
+    - [ ] 常见问题解答
 
-- [ ] API 文档
-  - [ ] OpenAPI/Swagger 规范
-  - [ ] 请求/响应示例
-  - [ ] 错误码说明
-
-- [ ] 开发文档
-  - [ ] 架构设计文档
-  - [ ] 代码规范
-  - [ ] 贡献指南
-
-- [ ] 用户文档
-  - [ ] 安装指南
-  - [ ] 使用教程
-  - [ ] 常见问题解答
+- [ ] 扩展功能
+  - [ ] 支持更多文件格式导入（PDF、DOCX）
+  - [ ] 添加任务队列管理
 
 ## 技术债务
 
@@ -189,9 +204,8 @@
 1. **文件扩展名**: Node.js 文件使用 `.js` 而非 `.mjs`，因为 package.json 中设置了 `"type": "module"`
 
 2. **依赖管理**:
-   - PDF 解析可能需要 `pdf-parse` 包
-   - DOCX 解析可能需要 `mammoth` 包
-   - 如果不需要这些格式，可以省略对应解析器
+   - 视频合并需要 `fluent-ffmpeg` 包
+   - 图片生成需要已有的 API 客户端
 
 3. **错误处理**:
    - 所有异步函数都应该有 try-catch
@@ -203,14 +217,14 @@
    - 避免使用 `./` 或 `../` 相对路径
 
 5. **并发控制**:
-   - 考虑添加生成任务的并发限制
-   - 实现任务队列管理
+   - 已添加并发配置 `CONCURRENT_SCENES`
+   - 需要实现任务队列管理
 
 ## 最后更新
 
 - **日期**: 2026-02-01
-- **总任务数**: 约 90+
-- **已完成**: 约 90/90+ (100%)
-- **进行中**: 约 0/90+ (0%)
-- **待开始**: 约 0/90+ (0%)
-- **核心功能**: 已完成并可用
+- **总任务数**: 约 100+
+- **已完成**: 约 65/100+ (65%)
+- **进行中**: 约 0/100+ (0%)
+- **待开始**: 约 35/100+ (35%)
+- **核心功能**: P0 核心功能已完成，P1 重要功能待实现
