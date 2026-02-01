@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 分镜 Pro - 专业分镜制作系统</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app">
+        <div class="app-header">
+            <div class="logo">
+                <div class="logo-icon">🎬</div>
+                <h1>AI 分镜 Pro</h1>
+            </div>
+            <div class="status-pill">
+                <div class="status-dot"></div>
+                <span id="serverStatus">检查中...</span>
+            </div>
+        </div>
+
+        <div class="main-layout">
+            <div class="content-area">
+                <div class="project-summary-card" id="projectSummary">
+                    <div class="summary-info">
+                        <h3>暂无项目</h3>
+                        <p>请创建新项目或加载范例开始</p>
+                    </div>
+                </div>
+
+                <div class="quick-start-banner">
+                    <div class="qs-icon">🚀</div>
+                    <div class="qs-content">
+                        <h3>新手？一键开始体验</h3>
+                        <p>点击下方任意范例模板，立即加载完整的角色、场景和镜头数据</p>
+                    </div>
+                </div>
+
+                <div class="ai-story-generator">
+                    <div class="ai-gen-header">
+                        <span class="ai-icon">✨</span>
+                        <div>
+                            <h4>一句话生成故事</h4>
+                            <p>输入你的创意，AI 自动生成完整的角色、场景和分镜</p>
+                        </div>
+                    </div>
+                    <div class="ai-input-row">
+                        <textarea id="storyIdeaInput" placeholder="例如：一个程序员在深夜加班时，意外发现公司的AI系统产生了自我意识..."></textarea>
+                        <button id="generateStoryBtn" class="primary-btn">🚀 AI 生成</button>
+                    </div>
+                    <div id="storyGenStatus"></div>
+                </div>
+
+                <div class="templates-section">
+                    <h3>📦 选择一个范例开始 <span class="recommend-badge">推荐新手</span></h3>
+                    <div class="templates-grid">
+                        <div class="template-card featured" data-template="咖啡厅邂逅">
+                            <div class="info">
+                                <span class="badge drama">❤️ 爱情</span>
+                                <h4>☕ 咖啡厅邂逅</h4>
+                                <p>一个温馨的爱情故事开篇，男女主角在咖啡厅偶遇</p>
+                                <span class="meta">2 角色 • 2 场景 • 8 镜头</span>
+                            </div>
+                        </div>
+                        <div class="template-card" data-template="都市追逐">
+                            <div class="info">
+                                <span class="badge action">🏃 动作</span>
+                                <h4>🏙️ 都市追逐</h4>
+                                <p>紧张刺激的动作场景，主角在城市中被追逐</p>
+                                <span class="meta">2 角色 • 2 场景 • 6 镜头</span>
+                            </div>
+                        </div>
+                        <div class="template-card" data-template="温馨家庭">
+                            <div class="info">
+                                <span class="badge drama">🏠 家庭</span>
+                                <h4>👨‍👩‍👧 温馨家庭</h4>
+                                <p>家庭日常温馨场景，展现亲情</p>
+                                <span class="meta">2 角色 • 2 场景 • 5 镜头</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="workflow-guide">
+                    <h3>📋 工作流程（4个步骤）</h3>
+                    <p class="guide-desc">加载范例后，按顺序完成以下步骤即可生成分镜作品</p>
+                    <div class="steps-container">
+                        <div class="step-item" data-step="create">
+                            <div class="step-num">1</div>
+                            <div class="step-info">
+                                <h4>创建</h4>
+                                <p>添加角色和场景</p>
+                            </div>
+                            <div class="step-arrow">→</div>
+                        </div>
+                        <div class="step-item" data-step="arrange">
+                            <div class="step-num">2</div>
+                            <div class="step-info">
+                                <h4>编排</h4>
+                                <p>设计镜头顺序</p>
+                            </div>
+                            <div class="step-arrow">→</div>
+                        </div>
+                        <div class="step-item" data-step="generate">
+                            <div class="step-num">3</div>
+                            <div class="step-info">
+                                <h4>生成</h4>
+                                <p>AI 生成图像</p>
+                            </div>
+                            <div class="step-arrow">→</div>
+                        </div>
+                        <div class="step-item last" data-step="export">
+                            <div class="step-num">4</div>
+                            <div class="step-info">
+                                <h4>导出</h4>
+                                <p>下载成品</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="workflow-nav-buttons">
+                        <button id="navCreateBtn">① 创建角色/场景</button>
+                        <button id="navArrangeBtn">② 编排镜头</button>
+                        <button id="navGenerateBtn">③ 生成图像</button>
+                        <button id="navExportBtn">④ 导出作品</button>
+                    </div>
+                </div>
+
+                <div class="tabs-container">
+                    <div class="tabs">
+                        <button class="tab-btn active" data-tab="shots">镜头列表</button>
+                        <button class="tab-btn" data-tab="characters">角色管理</button>
+                        <button class="tab-btn" data-tab="scenes">场景管理</button>
+                    </div>
+
+                    <div class="tab-content active" id="shotsTab">
+                        <div id="shotsList" class="shots-list"></div>
+                    </div>
+
+                    <div class="tab-content" id="charactersTab">
+                        <div class="form-section">
+                            <h3>添加新角色</h3>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>角色名称 *</label>
+                                    <input type="text" id="charNameInput" placeholder="例如：小明">
+                                </div>
+                                <div class="form-group">
+                                    <label>角色描述</label>
+                                    <textarea id="charDescInput" placeholder="描述角色的外貌、性格等特征"></textarea>
+                                </div>
+                            </div>
+                            <button id="addCharacterBtn" class="primary-btn">添加角色</button>
+                        </div>
+                        <div id="charactersList" class="cards-list"></div>
+                    </div>
+
+                    <div class="tab-content" id="scenesTab">
+                        <div class="form-section">
+                            <h3>添加新场景</h3>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>场景名称 *</label>
+                                    <input type="text" id="sceneNameInput" placeholder="例如：办公室">
+                                </div>
+                                <div class="form-group">
+                                    <label>场景描述</label>
+                                    <textarea id="sceneDescInput" placeholder="描述场景的环境、氛围等"></textarea>
+                                </div>
+                            </div>
+                            <button id="addSceneBtn" class="primary-btn">添加场景</button>
+                        </div>
+                        <div id="scenesList" class="cards-list"></div>
+                    </div>
+                </div>
+
+                <div class="shot-modal" id="shotModal" style="display:none;">
+                    <div class="shot-modal-content">
+                        <div class="shot-modal-header">
+                            <span id="modalTitle">镜头预览</span>
+                            <button class="shot-modal-close">&times;</button>
+                        </div>
+                        <div class="shot-modal-body">
+                            <div class="shot-modal-image-container">
+                                <div id="modalImage"></div>
+                            </div>
+                            <div class="shot-modal-info">
+                                <div class="info-section">
+                                    <div class="info-label">镜头描述</div>
+                                    <div id="modalDesc" class="info-value"></div>
+                                </div>
+                                <div class="info-row">
+                                    <div class="info-item"><span class="info-label">角色</span><span id="modalChars" class="info-value"></span></div>
+                                    <div class="info-item"><span class="info-label">场景</span><span id="modalScene" class="info-value"></span></div>
+                                </div>
+                                <div class="info-row">
+                                    <div class="info-item"><span class="info-label">景别</span><span id="modalType" class="info-value"></span></div>
+                                    <div class="info-item"><span class="info-label">镜头角度</span><span id="modalAngle" class="info-value"></span></div>
+                                </div>
+                                <div class="info-section">
+                                    <div class="info-label">生成提示词</div>
+                                    <div id="modalPrompt" class="info-value prompt-text"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="shot-modal-nav">
+                            <button class="nav-btn" id="prevShotBtn">◀ 上一个</button>
+                            <span id="modalNav">1 / 7</span>
+                            <button class="nav-btn" id="nextShotBtn">下一个 ▶</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
