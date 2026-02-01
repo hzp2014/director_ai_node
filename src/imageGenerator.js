@@ -38,26 +38,26 @@ export class ApiImageGenerator extends ImageGenerator {
 
   async generate(prompt, options = {}) {
     try {
-      const {
-        width = 1024,
-        height = 576,
-        steps = 30,
-        guidance_scale = 7.5,
-        seed = -1,
-        negative_prompt = this.getNegativePrompt()
-      } = options;
+      const { width = 1024, height = 576 } = options;
+
+      const sizeMap = {
+        '1024x576': '1024x1024',
+        '512x512': '512x512',
+        '1024x1024': '1024x1024',
+        '1920x1080': '1024x1024'
+      };
+      const size = sizeMap[`${width}x${height}`] || '1024x1024';
+
+      const requestBody = {
+        model: 'dall-e-3',
+        prompt,
+        n: 1,
+        size
+      };
 
       const response = await axios.post(
-        `${this.base_url}/generate`,
-        {
-          prompt,
-          negative_prompt,
-          width,
-          height,
-          steps,
-          guidance_scale,
-          seed: seed >= 0 ? seed : undefined
-        },
+        `${this.base_url}/v1/images/generations`,
+        requestBody,
         {
           headers: {
             'Authorization': `Bearer ${this.api_key}`,
@@ -67,13 +67,12 @@ export class ApiImageGenerator extends ImageGenerator {
         }
       );
 
-      if (response.data && response.data.image) {
+      if (response.data && response.data.data && response.data.data.length > 0) {
         return new GenerationResult({
           success: true,
-          image_path: response.data.image,
+          image_path: response.data.data[0].url,
           metadata: {
-            seed: response.data.seed,
-            generation_time: response.data.generation_time
+            revised_prompt: response.data.data[0].revised_prompt
           }
         });
       }
@@ -84,6 +83,9 @@ export class ApiImageGenerator extends ImageGenerator {
       });
     } catch (error) {
       console.error('API generation error:', error.message);
+      if (error.response && error.response.data) {
+        console.error('API response:', JSON.stringify(error.response.data));
+      }
       return new GenerationResult({
         success: false,
         error: error.response?.data?.message || error.message

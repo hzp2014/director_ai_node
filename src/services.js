@@ -422,10 +422,10 @@ export class ShotService {
       camera: templateDef ? templateDef.camera : new CameraSettings(),
       composition: templateDef ? templateDef.composition : new CompositionSettings(),
       slot_weights: new SlotWeights({
-        character: templateDef ? templateDef.default_weights.character : 0.85,
-        scene: templateDef ? templateDef.default_weights.scene : 0.5,
-        props: 0.6,
-        style: 0.4
+        character: templateDef ? templateDef.weight_profile?.character || 0.85 : 0.85,
+        scene: templateDef ? templateDef.weight_profile?.scene || 0.5 : 0.5,
+        props: templateDef ? templateDef.weight_profile?.props || 0.6 : 0.6,
+        style: templateDef ? templateDef.weight_profile?.style || 0.4 : 0.4
       })
     });
 
