@@ -421,28 +421,50 @@ async function loadScreenplay() {
 
 function openShotModal(index) {
     if (!currentProject?.shots?.length) return;
-    
+
     currentModalShotIndex = index;
     const shot = currentProject.shots[index];
-    
+
     document.getElementById('modalTitle').textContent = `镜头 ${shot.shot_number} - 预览`;
-    
+
     const imageContainer = document.getElementById('modalImage');
-    if (shot.output_image) {
+    const videoContainer = document.getElementById('modalVideo');
+
+    if (shot.video_url) {
+        imageContainer.style.display = 'none';
+        videoContainer.style.display = 'block';
+        videoContainer.innerHTML = `<video src="${shot.video_url}" controls autoplay loop style="width:100%; height:100%; object-fit:contain;"></video>`;
+    } else if (shot.output_image) {
+        imageContainer.style.display = 'block';
+        videoContainer.style.display = 'none';
         imageContainer.innerHTML = `<img src="${shot.output_image}" class="modal-preview-img">`;
     } else {
+        imageContainer.style.display = 'block';
+        videoContainer.style.display = 'none';
         imageContainer.innerHTML = '<div class="modal-no-image">暂无图像</div>';
     }
-    
+
     document.getElementById('modalDesc').textContent = shot.description || '暂无描述';
     document.getElementById('modalChars').textContent = Array.isArray(shot.characters) ? shot.characters.join(', ') : '无';
     document.getElementById('modalScene').textContent = shot.scene_id || '未设置';
     document.getElementById('modalType').textContent = shot.template || '未设置';
     document.getElementById('modalAngle').textContent = shot.camera?.angle || '未设置';
     document.getElementById('modalPrompt').textContent = shot.generated_prompt || shot.standard_prompt || '暂无提示词';
-    
+
+    const statusBadge = document.getElementById('modalStatus');
+    if (shot.video_url) {
+        statusBadge.textContent = '已完成（视频）';
+        statusBadge.className = 'info-value status-badge completed';
+    } else if (shot.output_image) {
+        statusBadge.textContent = '已完成（图片）';
+        statusBadge.className = 'info-value status-badge completed';
+    } else {
+        statusBadge.textContent = '等待中';
+        statusBadge.className = 'info-value status-badge pending';
+    }
+
     document.getElementById('modalNav').textContent = `${index + 1} / ${currentProject.shots.length}`;
-    
+
     document.getElementById('shotModal').style.display = 'flex';
 }
 
