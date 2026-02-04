@@ -2,6 +2,8 @@
  * 聊天消息相关类型定义
  */
 
+import type { ScreenplayDraft } from './screenplay'
+
 export enum MessageRole {
   USER = 'user',
   ASSISTANT = 'assistant',

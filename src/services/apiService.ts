@@ -63,7 +63,8 @@ export class GLMService extends ApiService {
         temperature: 0.7,
         max_tokens: 2000,
       })
-      return response.choices[0].message.content
+      // 响应拦截器已返回response.data
+      return (response as any).choices[0].message.content
     } catch (error: any) {
       console.error('GLM API Error:', error.response?.data || error.message)
       throw new Error(error.response?.data?.error?.message || 'GLM API调用失败')
@@ -85,6 +86,7 @@ export class GLMService extends ApiService {
         responseType: 'stream',
       })
 
+      // 对于流式响应，responseType: 'stream'会覆盖拦截器，所以需要访问response.data
       const stream = response.data
       let buffer = ''
 
@@ -194,7 +196,7 @@ export class GLMService extends ApiService {
         temperature: 0.5,
         max_tokens: 1000,
       })
-      return response.choices[0].message.content
+      return (response as any).choices[0].message.content
     } catch (error: any) {
       console.error('GLM Vision Error:', error.response?.data || error.message)
       throw new Error('图片分析失败')
@@ -231,7 +233,7 @@ export class GLMService extends ApiService {
         temperature: 0.7,
         max_tokens: 2000,
       })
-      return response.choices[0].message.content
+      return (response as any).choices[0].message.content
     } catch (error: any) {
       console.error('GLM Chat Error:', error.response?.data || error.message)
       throw new Error('聊天失败')
@@ -267,7 +269,7 @@ export class CangheImageService extends ApiService {
         aspect_ratio: params.aspectRatio || '16:9',
         n: 1,
       })
-      return response.data[0].url
+      return (response as any).data[0].url
     } catch (error: any) {
       console.error('Canghe Image Error:', error.response?.data || error.message)
       throw new Error('图片生成失败')
@@ -335,7 +337,7 @@ export class CangheVideoService extends ApiService {
         motion: params.motion || 'medium',
       })
       return {
-        taskId: response.task_id,
+        taskId: (response as any).task_id,
         status: 'pending',
       }
     } catch (error: any) {
@@ -351,10 +353,10 @@ export class CangheVideoService extends ApiService {
     try {
       const response = await this.client.get(`/v1/videos/generations/${taskId}`)
       return {
-        taskId: response.task_id,
-        status: response.status,
-        videoUrl: response.video_url,
-        progress: response.progress,
+        taskId: (response as any).task_id,
+        status: (response as any).status,
+        videoUrl: (response as any).video_url,
+        progress: (response as any).progress,
       }
     } catch (error: any) {
       console.error('Video Status Error:', error.response?.data || error.message)

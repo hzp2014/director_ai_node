@@ -5,6 +5,7 @@
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 import type { ChatMessage, UserImage, ScreenplayDraft } from '@/types'
+import { MessageRole } from '@/types'
 
 interface ChatState {
   // 状态
@@ -105,31 +106,25 @@ export const useChatStore = create<ChatState>()(
       try {
         // 添加用户消息
         addMessage({
-          role: 'user',
+          role: MessageRole.USER,
           content: userPrompt,
         })
 
         // 添加助手消息占位符
-        const assistantMessageId = `msg-${Date.now()}`
         addMessage({
-          id: assistantMessageId,
-          role: 'assistant',
+          role: MessageRole.ASSISTANT,
           content: '正在为您生成剧本...',
           isStreaming: true,
         })
-
-        // 调用API生成剧本
-        // 这里需要实际的API调用
-        // const response = await apiService.generateScreenplay(userPrompt)
 
         // 模拟响应（实际应该调用API）
         setTimeout(() => {
           // 更新消息
           const state = get()
-          const message = state.messages.find(m => m.id === assistantMessageId)
-          if (message) {
-            message.content = '剧本草稿已生成！正在为您展示详情...'
-            message.isStreaming = false
+          const lastMessage = state.messages[state.messages.length - 1]
+          if (lastMessage) {
+            lastMessage.content = '剧本草稿已生成！正在为您展示详情...'
+            lastMessage.isStreaming = false
           }
 
           // 设置草稿（这里应该是实际的解析结果）
@@ -140,7 +135,7 @@ export const useChatStore = create<ChatState>()(
       } catch (error) {
         console.error('Failed to generate screenplay:', error)
         addMessage({
-          role: 'assistant',
+          role: MessageRole.ASSISTANT,
           content: '抱歉，剧本生成失败。请重试。',
         })
         setProcessing(false)

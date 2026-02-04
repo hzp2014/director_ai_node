@@ -2,6 +2,8 @@
  * 剧本相关类型定义
  */
 
+import type { CharacterInfo, CharacterSheet } from './character'
+
 export enum DraftStatus {
   GENERATING = 'generating',
   PENDING_REVIEW = 'pending_review',
@@ -15,13 +17,6 @@ export enum ScreenplayStatus {
   READY = 'ready',
   COMPLETED = 'completed',
   FAILED = 'failed',
-}
-
-export interface CharacterInfo {
-  name: string
-  description: string
-  appearance: string
-  personality: string
 }
 
 export interface ScreenplayDraft {

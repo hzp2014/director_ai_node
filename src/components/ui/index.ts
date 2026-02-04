@@ -4,6 +4,7 @@
 
 export * from './button'
 export * from './input'
+export * from './textarea'
 export * from './card'
 export * from './scroll-area'
 export * from './avatar'

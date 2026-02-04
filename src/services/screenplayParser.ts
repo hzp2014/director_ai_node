@@ -4,6 +4,7 @@
  */
 
 import type { ScreenplayDraft, SceneDraft, CharacterInfo } from '@/types'
+import { DraftStatus } from '@/types'
 
 export class ScreenplayParser {
   /**
@@ -73,7 +74,7 @@ export class ScreenplayParser {
       episodes: Number(data.episodes),
       characters: this.validateCharacters(data.characters),
       scenes: this.validateScenes(data.scenes),
-      status: 'pending_review' as const,
+      status: DraftStatus.PENDING_REVIEW,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
