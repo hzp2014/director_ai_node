@@ -59,60 +59,13 @@ export default function ChatPage() {
         content: data.content,
       })
 
-      // 检测是否包含剧本生成意图
-      const isVideoIntent =
-        content.includes('生成') ||
-        content.includes('制作') ||
-        content.includes('短剧') ||
-        content.includes('剧本') ||
-        content.includes('视频')
-
-      if (isVideoIntent) {
-        // 模拟生成剧本草稿（实际应该调用API）
+      // 如果是演示模式且包含剧本草稿，显示草稿卡片
+      if (data.demoMode && data.demoDraft) {
         setTimeout(() => {
-          const mockDraft = {
-            id: `draft-${Date.now()}`,
-            title: 'AI生成的短剧',
-            genre: '爱情',
-            episodes: 3,
-            characters: [
-              {
-                name: '主角A',
-                description: '勇敢善良的年轻人',
-                appearance: '英俊潇洒',
-                personality: '乐观向上',
-              },
-              {
-                name: '主角B',
-                description: '聪明机智的伙伴',
-                appearance: '美丽动人',
-                personality: '温柔体贴',
-              },
-            ],
-            scenes: [
-              {
-                id: 'scene-1',
-                episodeNumber: 1,
-                sceneNumber: 1,
-                location: '咖啡馆',
-                description: '初次相遇的温馨场景',
-                dialogue: [
-                  { character: '主角A', text: '你好，很高兴认识你' },
-                  { character: '主角B', text: '我也是' },
-                ],
-                action: '两人握手',
-                duration: 30,
-              },
-            ],
-            status: DraftStatus.PENDING_REVIEW,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          }
-
-          setCurrentDraft(mockDraft)
+          setCurrentDraft(data.demoDraft)
           setShowDraftCard(true)
           setProcessing(false)
-        }, 1000)
+        }, 500)
       } else {
         setProcessing(false)
       }
