@@ -2,37 +2,37 @@
 
 > **项目**: AI漫导 Web版 (Android → Web迁移)
 > **技术栈**: Node.js + React + Next.js + TypeScript
-> **更新日期**: 2026-02-03
+> **更新日期**: 2026-02-04
 
 ---
 
 ## 🎯 阶段一: 项目初始化 (Week 1)
 
 ### 1.1 项目脚手架搭建
-- [ ] **1.1.1** 创建Next.js项目 (TypeScript + Tailwind + App Router)
+- [x] **1.1.1** 创建Next.js项目 (TypeScript + Tailwind + App Router)
   ```bash
   npx create-next-app@latest director-ai-web --typescript --tailwind --app
   ```
-- [ ] **1.1.2** 初始化Git仓库，配置.gitignore
-- [ ] **1.1.3** 配置ESLint和Prettier
-- [ ] **1.1.4** 配置路径别名 (@/* → src/*)
+- [x] **1.1.2** 初始化Git仓库，配置.gitignore
+- [x] **1.1.3** 配置ESLint和Prettier
+- [x] **1.1.4** 配置路径别名 (@/* → src/*)
 
 ### 1.2 依赖安装
-- [ ] **1.2.1** 安装核心依赖
+- [x] **1.2.1** 安装核心依赖
   ```bash
   npm install zustand immer
   npm install @tanstack/react-query axios
   npm install uuid date-fns zod
   npm install lucide-react
   ```
-- [ ] **1.2.2** 安装UI组件库
+- [x] **1.2.2** 安装UI组件库
   ```bash
   npx shadcn-ui@latest init
   npx shadcn-ui@latest add button card input dialog tabs scroll-area
   npx shadcn-ui@latest add avatar badge skeleton slider progress
   npx shadcn-ui@latest add dropdown-menu context-menu toast
   ```
-- [ ] **1.2.3** 安装开发依赖
+- [x] **1.2.3** 安装开发依赖
   ```bash
   npm install -D @types/uuid @types/node typescript
   ```
@@ -63,40 +63,40 @@
 - [ ] **1.4.3** 创建Redis缓存工具类
 
 ### 1.5 项目结构搭建
-- [ ] **1.5.1** 创建目录结构
+- [x] **1.5.1** 创建目录结构
   ```
   mkdir -p app/{chat,settings,screenplay-review,scene-media,api/{chat,screenplay,image,video,config}}
   mkdir -p components/{ui,chat,settings,screenplay,shared}
   mkdir -p stores controllers services models utils hooks lib types
   ```
-- [ ] **1.5.2** 配置Tailwind主题颜色
-- [ ] **1.5.3** 创建全局样式 (app/globals.css)
+- [x] **1.5.2** 配置Tailwind主题颜色
+- [x] **1.5.3** 创建全局样式 (app/globals.css)
 
 ---
 
 ## 🎯 阶段二: 数据模型与类型定义 (Week 1)
 
 ### 2.1 TypeScript类型定义
-- [ ] **2.1.1** 聊天消息相关类型 (models/chat.ts)
+- [x] **2.1.1** 聊天消息相关类型 (types/chat.ts)
   - ChatMessage
   - UserImage
   - MessageRole
-- [ ] **2.1.2** 剧本相关类型 (models/screenplay.ts)
+- [x] **2.1.2** 剧本相关类型 (types/screenplay.ts)
   - ScreenplayDraft
   - Screenplay
   - DraftStatus
   - ScreenplayStatus
-- [ ] **2.1.3** 角色相关类型 (models/character.ts)
+- [x] **2.1.3** 角色相关类型 (types/character.ts)
   - CharacterInfo
   - CharacterSheet
-- [ ] **2.1.4** 场景相关类型 (models/scene.ts)
+- [x] **2.1.4** 场景相关类型 (types/screenplay.ts)
   - SceneDraft
   - Scene
   - SceneStatus
-- [ ] **2.1.5** 会话相关类型 (models/conversation.ts)
+- [x] **2.1.5** 会话相关类型 (types/conversation.ts)
   - Conversation
   - ConversationMessage
-- [ ] **2.1.6** 智能体命令类型 (models/agent.ts)
+- [x] **2.1.6** 智能体命令类型 (types/agent.ts)
   - AgentCommand
   - ToolResult
 
@@ -113,41 +113,41 @@
 ## 🎯 阶段三: 核心服务层 (Week 2)
 
 ### 3.1 API服务封装
-- [ ] **3.1.1** 创建ApiService基类 (services/apiService.ts)
+- [x] **3.1.1** 创建ApiService基类 (services/apiService.ts)
   - 智谱GLM客户端配置
   - 苍何视频API客户端配置
   - 苍何图片API客户端配置
   - 豆包ARK客户端配置
-- [ ] **3.1.2** 实现GLM聊天API
+- [x] **3.1.2** 实现GLM聊天API
   - sendToGLM(): 普通请求
   - sendToGLMStream(): 流式请求
-- [ ] **3.1.3** 实现剧本生成API
+- [x] **3.1.3** 实现剧本生成API
   - generateDramaScreenplay(): 生成漫剧剧本
-- [ ] **3.1.4** 实现图片理解API
+- [x] **3.1.4** 实现图片理解API
   - analyzeImageForCharacter(): 分析图片提取角色特征
   - chatWithImageSupport(): 支持图片的聊天
 
 ### 3.2 图片生成服务
-- [ ] **3.2.1** 创建ImageGenerationService (services/imageGenerationService.ts)
-- [ ] **3.2.2** 实现单张图片生成
+- [x] **3.2.1** 创建ImageGenerationService (services/imageGenerationService.ts)
+- [x] **3.2.2** 实现单张图片生成
   - generateImage(): 基础图片生成
-- [ ] **3.2.3** 实现角色三视图生成
+- [x] **3.2.3** 实现角色三视图生成
   - generateCharacterSheet(): 生成三视图
   - generateMultipleCharacterSheets(): 批量生成
-- [ ] **3.2.4** 实现场景图片批量生成
+- [x] **3.2.4** 实现场景图片批量生成
   - generateSceneImages(): 批量生成场景图片
   - 实现并发控制 (p-limit)
 
 ### 3.3 视频生成服务
-- [ ] **3.3.1** 创建VideoGenerationService (services/videoGenerationService.ts)
-- [ ] **3.3.2** 实现视频任务提交
+- [x] **3.3.1** 创建VideoGenerationService (services/videoGenerationService.ts)
+- [x] **3.3.2** 实现视频任务提交
   - submitVideoTask(): 提交视频生成任务
-- [ ] **3.3.3** 实现视频状态轮询
+- [x] **3.3.3** 实现视频状态轮询
   - pollVideoStatus(): 轮询视频生成状态
-- [ ] **3.3.4** 实现批量视频生成
+- [x] **3.3.4** 实现批量视频生成
   - generateSceneVideos(): 批量生成场景视频
   - 实现并发控制
-- [ ] **3.3.5** 实现视频合并服务
+- [x] **3.3.5** 实现视频合并服务
   - mergeVideos(): 合并多个视频
   - 使用FFmpeg实现无损合并
 
@@ -157,12 +157,12 @@
 - [ ] **3.4.3** 实现配置验证
 
 ### 3.5 剧本解析服务
-- [ ] **3.5.1** 创建ScreenplayParser (services/screenplayParser.ts)
-- [ ] **3.5.2** 实现JSON解析
-- [ ] **3.5.3** 实现错误处理和降级
+- [x] **3.5.1** 创建ScreenplayParser (services/screenplayParser.ts)
+- [x] **3.5.2** 实现JSON解析
+- [x] **3.5.3** 实现错误处理和降级
 
 ### 3.6 工具函数
-- [ ] **3.6.1** 创建Logger工具 (utils/logger.ts)
+- [x] **3.6.1** 创建Logger工具 (lib/logger.ts)
 - [ ] **3.6.2** 创建提示词净化工具 (utils/promptSanitizer.ts)
 - [ ] **3.6.3** 创建API错误处理工具 (utils/apiErrorHandler.ts)
 - [ ] **3.6.4** 创建限流工具 (utils/rateLimiter.ts)
@@ -172,23 +172,23 @@
 ## 🎯 阶段四: 状态管理 (Week 2)
 
 ### 4.1 Chat Store
-- [ ] **4.1.1** 创建chatStore.ts (stores/chatStore.ts)
-- [ ] **4.1.2** 实现状态定义
+- [x] **4.1.1** 创建chatStore.ts (stores/chatStore.ts)
+- [x] **4.1.2** 实现状态定义
   - messages
   - userImages
   - currentDraft
   - isProcessing
-- [ ] **4.1.3** 实现Actions
+- [x] **4.1.3** 实现Actions
   - addMessage()
   - addUserImage()
   - removeUserImage()
   - sendMessage()
   - clearChat()
-- [ ] **4.1.4** 实现视频生成流程
+- [x] **4.1.4** 实现视频生成流程
   - generateScreenplayDraft()
   - generateCharacterSheets()
   - generateScreenplayMedia()
-- [ ] **4.1.5** 实现意图检测
+- [x] **4.1.5** 实现意图检测
   - isVideoGenerationIntent()
 
 ### 4.2 Conversation Store
@@ -205,9 +205,9 @@
   - saveMessage()
 
 ### 4.3 Screenplay Store
-- [ ] **4.3.1** 创建screenplayStore.ts (stores/screenplayStore.ts)
-- [ ] **4.3.2** 实现剧本状态管理
-- [ ] **4.3.3** 实现场景进度追踪
+- [x] **4.3.1** 创建screenplayStore.ts (stores/screenplayStore.ts)
+- [x] **4.3.2** 实现剧本状态管理
+- [x] **4.3.3** 实现场景进度追踪
 
 ### 4.4 Video Merge Store
 - [ ] **4.4.1** 创建videoMergeStore.ts (stores/videoMergeStore.ts)
@@ -218,9 +218,9 @@
 - [ ] **4.4.3** 实现合并Actions
 
 ### 4.5 API Config Store
-- [ ] **4.5.1** 创建apiConfigStore.ts (stores/apiConfigStore.ts)
-- [ ] **4.5.2** 实现API密钥状态管理
-- [ ] **4.5.3** 实现配置Actions
+- [x] **4.5.1** 创建apiConfigStore.ts (stores/apiConfigStore.ts)
+- [x] **4.5.2** 实现API密钥状态管理
+- [x] **4.5.3** 实现配置Actions
 
 ---
 
@@ -257,19 +257,19 @@
 ## 🎯 阶段六: API路由 (Week 3)
 
 ### 6.1 聊天API
-- [ ] **6.1.1** 创建chat API路由 (app/api/chat/route.ts)
-- [ ] **6.1.2** 实现POST /api/chat
+- [x] **6.1.1** 创建chat API路由 (app/api/chat/route.ts)
+- [x] **6.1.2** 实现POST /api/chat
   - 普通聊天
   - 流式响应
 - [ ] **6.1.3** 实现图片上传处理
 
 ### 6.2 剧本API
-- [ ] **6.2.1** 创建screenplay API路由 (app/api/screenplay/route.ts)
-- [ ] **6.2.2** 实现POST /api/screenplay/generate
+- [x] **6.2.1** 创建screenplay API路由 (app/api/screenplay/route.ts)
+- [x] **6.2.2** 实现POST /api/screenplay/generate
   - 生成剧本草稿
-- [ ] **6.2.3** 实现POST /api/screenplay/confirm
+- [x] **6.2.3** 实现POST /api/screenplay/confirm
   - 确认剧本并开始生成
-- [ ] **6.2.4** 实现GET /api/screenplay/:id
+- [x] **6.2.4** 实现GET /api/screenplay/:id
   - 获取剧本详情
 
 ### 6.3 图片API
@@ -313,11 +313,11 @@
 
 ### 7.2 聊天组件
 - [ ] **7.2.1** ChatHeader组件 (components/chat/ChatHeader.tsx)
-- [ ] **7.2.2** MessageList组件 (components/chat/MessageList.tsx)
-- [ ] **7.2.3** MessageBubble组件 (components/chat/MessageBubble.tsx)
+- [x] **7.2.2** MessageList组件 (components/chat/MessageList.tsx)
+- [x] **7.2.3** MessageBubble组件 (components/chat/MessageBubble.tsx)
   - 支持Markdown渲染
   - 支持图片/视频预览
-- [ ] **7.2.4** ChatInput组件 (components/chat/ChatInput.tsx)
+- [x] **7.2.4** ChatInput组件 (components/chat/ChatInput.tsx)
   - 文本输入
   - 图片上传
 - [ ] **7.2.5** ImagePreview组件 (components/chat/ImagePreview.tsx)
@@ -340,15 +340,15 @@
 ## 🎯 阶段八: 页面开发 (Week 4)
 
 ### 8.1 聊天页面
-- [ ] **8.1.1** 创建chat页面 (app/chat/page.tsx)
-- [ ] **8.1.2** 实现页面布局
-- [ ] **8.1.3** 集成聊天组件
-- [ ] **8.1.4** 实现消息发送和接收
+- [x] **8.1.1** 创建chat页面 (app/chat/page.tsx)
+- [x] **8.1.2** 实现页面布局
+- [x] **8.1.3** 集成聊天组件
+- [x] **8.1.4** 实现消息发送和接收
 - [ ] **8.1.5** 实现流式响应显示
 
 ### 8.2 设置页面
-- [ ] **8.2.1** 创建settings页面 (app/settings/page.tsx)
-- [ ] **8.2.2** 实现API配置UI
+- [x] **8.2.1** 创建settings页面 (app/settings/page.tsx)
+- [x] **8.2.2** 实现API配置UI
 - [ ] **8.2.3** 实现缓存管理UI
 - [ ] **8.2.4** 实现数据库信息展示
 - [ ] **8.2.5** 实现视频合并测试UI
@@ -367,8 +367,8 @@
 - [ ] **8.4.4** 实现场景切换
 
 ### 8.5 首页
-- [ ] **8.5.1** 创建首页 (app/page.tsx)
-- [ ] **8.5.2** 实现重定向到chat页面
+- [x] **8.5.1** 创建首页 (app/page.tsx)
+- [x] **8.5.2** 实现重定向到chat页面
 - [ ] **8.5.3** 实现欢迎界面
 
 ---
@@ -469,19 +469,19 @@
 
 | 阶段 | 任务数 | 已完成 | 进度 |
 |------|--------|--------|------|
-| 阶段一: 项目初始化 | 15 | 0 | 0% |
-| 阶段二: 数据模型 | 8 | 0 | 0% |
-| 阶段三: 核心服务层 | 24 | 0 | 0% |
-| 阶段四: 状态管理 | 18 | 0 | 0% |
+| 阶段一: 项目初始化 | 15 | 10 | 67% |
+| 阶段二: 数据模型 | 8 | 6 | 75% |
+| 阶段三: 核心服务层 | 24 | 20 | 83% |
+| 阶段四: 状态管理 | 18 | 11 | 61% |
 | 阶段五: 业务控制器 | 12 | 0 | 0% |
-| 阶段六: API路由 | 15 | 0 | 0% |
-| 阶段七: UI组件 | 22 | 0 | 0% |
-| 阶段八: 页面开发 | 15 | 0 | 0% |
+| 阶段六: API路由 | 15 | 7 | 47% |
+| 阶段七: UI组件 | 22 | 6 | 27% |
+| 阶段八: 页面开发 | 15 | 7 | 47% |
 | 阶段九: 自定义Hooks | 3 | 0 | 0% |
 | 阶段十: 功能集成测试 | 12 | 0 | 0% |
-| 阶段十一: 优化完善 | 16 | 0 | 0% |
+| 阶段十一: 优化完善 | 16 | 1 | 6% |
 | 阶段十二: 部署上线 | 12 | 0 | 0% |
-| **总计** | **172** | **0** | **0%** |
+| **总计** | **172** | **68** | **40%** |
 
 ---
 
@@ -538,5 +538,13 @@ open http://localhost:3000
 
 ---
 
-*文档版本: 1.0.0*
-*最后更新: 2026-02-03*
+## 📚 相关文档
+
+- **[开发进度总结](progress-summary.md)** - 查看已完成功能和下一步工作
+- **[README.md](../README.md)** - 项目说明
+
+---
+
+*文档版本: 1.1.0*
+*最后更新: 2026-02-04*
+*更新内容: 标记已完成任务，更新进度追踪（40%）*

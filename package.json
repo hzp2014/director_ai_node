@@ -1,37 +1,48 @@
 {
   "name": "directorai-node-platform",
   "version": "1.0.0",
-  "description": "AI Director Platform - Node.js implementation for professional storyboard generation",
-  "main": "src/app.js",
-  "type": "module",
+  "description": "AI Director Platform - Next.js implementation for AI short drama generation",
   "scripts": {
-    "start": "node src/app.js",
-    "dev": "node --watch src/app.js",
-    "test": "node --test",
-    "setup": "node src/setupWizard.js"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
   },
   "keywords": [
     "ai",
-    "storyboard",
+    "short-drama",
     "video-generation",
-    "directorai"
+    "directorai",
+    "nextjs"
   ],
   "author": "DirectorAI Team",
   "license": "MIT",
   "dependencies": {
-    "express": "^4.18.2",
-    "cors": "^2.8.5",
-    "dotenv": "^16.3.1",
+    "next": "^14.1.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "axios": "^1.6.0",
-    "multer": "^1.4.5-lts.1",
-    "sharp": "^0.33.0",
-    "form-data": "^4.0.0",
     "uuid": "^9.0.1",
-    "ws": "^8.16.0",
-    "fluent-ffmpeg": "^2.1.2"
+    "zustand": "^4.5.0",
+    "immer": "^10.0.3",
+    "@tanstack/react-query": "^5.17.0",
+    "date-fns": "^3.0.0",
+    "zod": "^3.22.0",
+    "lucide-react": "^0.309.0",
+    "clsx": "^2.1.0",
+    "tailwind-merge": "^2.2.0",
+    "class-variance-authority": "^0.7.0"
   },
   "devDependencies": {
-    "@types/node": "^20.10.0"
+    "@types/node": "^20.10.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "typescript": "^5.3.0",
+    "tailwindcss": "^3.4.0",
+    "postcss": "^8.4.0",
+    "autoprefixer": "^10.4.0",
+    "eslint": "^8.56.0",
+    "eslint-config-next": "^14.1.0"
   },
   "engines": {
     "node": ">=18.0.0"
